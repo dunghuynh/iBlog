@@ -1,0 +1,39 @@
+%h1 Listing articles
+
+%table
+  %tr
+    %th User
+    %th Title
+    %th Teaser
+    %th Body
+    %th Version
+    %th Changelog
+    %th Message
+    %th Freezebody
+    %th State
+    %th Submitted
+    %th Accepted
+    %th
+    %th
+    %th
+
+  - @articles.each do |article|
+    %tr
+      %td= article.user_id
+      %td= article.title
+      %td= article.teaser
+      %td= article.body
+      %td= article.version
+      %td= article.changelog
+      %td= article.message
+      %td= article.freezebody
+      %td= article.state
+      %td= article.submitted
+      %td= article.accepted
+      %td= link_to 'Show', article
+      %td= link_to 'Edit', edit_article_path(article)
+      %td= link_to 'Destroy', article, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Article', new_article_path
