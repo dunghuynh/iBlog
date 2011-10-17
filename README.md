@@ -62,18 +62,8 @@ Install rspec and cucumber
     $ rails generate rspec:install
     $ rails generate cucumber:install --capybara --rspec
     
-Generate really bad features using web_steps.rb
+### 4. Generate first scaffold: Article
 
-    # gem 'cucumber-rails-training-wheels'
-    $ rails generate cucumber_rails_training_wheels:install
-      create  features/step_definitions/web_steps.rb
-      create  features/support/paths.rb
-      create  features/support/selectors.rb
-    
-    $ rails generate cucumber_rails_training_wheels:feature post title:string body:text number:integer published:boolean
-      create  features/manage_posts.feature
-      create  features/step_definitions/post_steps.rb
-        gsub  features/support/paths.rb
-    
-    $ rails generate scaffold post title:string body:text number:integer published:boolean
-
+    $ rails generate scaffold Article user_id:integer title:string teaser:text body:text version:string changelog:text message:string freezebody:text state:integer submitted:date accepted:date
+    $ rake db:migrate
+    $ rails server

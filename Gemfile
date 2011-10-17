@@ -32,7 +32,7 @@ gem 'jquery-rails'
 
 gem 'devise'
 gem 'haml-rails'  # to use haml instead of erb
-gem 'rack', '1.3.4' # 1.3.4 give some anoying warning
+gem 'rack' # 1.3.4 give some anoying warning
 
 group :development, :test do
   gem 'rspec-rails'
@@ -42,6 +42,5 @@ group :test do
   gem 'cucumber-rails'
   gem 'capybara'
   gem 'database_cleaner'
-  gem "cucumber-rails-training-wheels"
 end
 
