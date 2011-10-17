@@ -67,3 +67,18 @@ Install rspec and cucumber
     $ rails generate scaffold Article user_id:integer title:string teaser:text body:text version:string changelog:text message:string freezebody:text state:integer submitted:date accepted:date
     $ rake db:migrate
     $ rails server
+    
+### 5. Install Devise
+    $ rails generate devise:install
+
+Now we are prompted for 4 things:
+
+    1.  config/environments/development.rb: add “config.action_mailer.default_url_options = { :host => ‘localhost:3000’ }”
+    2.  config/routes.rb: add root :to => “article#index” (and delete public/index.html if you have not done before)
+    3.  views/layouts/application.html.haml: add flash messages:
+            %p.notice= notice
+            %p.alert= alert
+    4. If you are deploying Rails 3.1 on Heroku, you may want to set:
+         config.assets.initialize_on_precompile = false
+       On config/application.rb forcing your application to not access the DB
+       or load models when precompiling your assets.
