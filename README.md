@@ -49,3 +49,17 @@ Additional config:
     $ rails new iblog -T
     
 Option -T to skip Test::Unit files (since we you RSpec)
+
+### 3. Use some Gems
+
+Insert gems to `Gemfile` then `bundle install`
+
+    production: haml-rails, devise
+    test: rspec-rails, cucumber-rails, capybara, database_cleaner
+    
+Install rspec and cucumber
+
+    $ rails generate rspec:install
+    $ rails generate cucumber:install --capybara --rspec
+
+...
