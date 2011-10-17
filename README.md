@@ -14,7 +14,7 @@ Then add the content of `id_rsa.pub` to github.com `Account Settings” > Click 
     $ git add .
     $ git commit -m "init"
     $ git remote add origin git@github.com:DungHuynh/iBlog.git
-    $ git push origin master
+    $ git push -u origin master
 
 Additional config:
 
@@ -61,5 +61,19 @@ Install rspec and cucumber
 
     $ rails generate rspec:install
     $ rails generate cucumber:install --capybara --rspec
+    
+Generate really bad features using web_steps.rb
 
-...
+    # gem 'cucumber-rails-training-wheels'
+    $ rails generate cucumber_rails_training_wheels:install
+      create  features/step_definitions/web_steps.rb
+      create  features/support/paths.rb
+      create  features/support/selectors.rb
+    
+    $ rails generate cucumber_rails_training_wheels:feature post title:string body:text number:integer published:boolean
+      create  features/manage_posts.feature
+      create  features/step_definitions/post_steps.rb
+        gsub  features/support/paths.rb
+    
+    $ rails generate scaffold post title:string body:text number:integer published:boolean
+
