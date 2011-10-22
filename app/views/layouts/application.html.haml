@@ -7,21 +7,45 @@
     = csrf_meta_tags
   %body
     %header#page_header
-      %nav#nav_user
-        %ul
-          - if user_signed_in?
-            %li
-              %span#currentuser= current_user.email
-            \ 
-            %li= link_to "My Profile", edit_user_registration_path
-            %li= link_to "Sign out", destroy_user_session_path
-          - else
-            %li= link_to "Sign up", new_user_registration_path
-            %li= link_to "Sign in", new_user_session_path
-      #page_title
-        %h1 iBlog
-        %h2 write yours before too late
-    %section#flash
-      - flash.each do |key, value|
-        %div{:class => "flash #{key}"}= value
-    = yield
+      %nav.nav_bar
+        #nav_header
+          %ul
+            %li= link_to "iBlog", root_path
+            %li= link_to "Articles", articles_path
+        #nav_user
+          %ul
+            - if user_signed_in?
+              %li
+                %span#currentuser= current_user.email
+              \ 
+              %li= link_to "My Profile", edit_user_registration_path
+              %li= link_to "Sign out", destroy_user_session_path
+            - else
+              %li= link_to "Register", new_user_registration_path
+              %li= link_to "Sign in", new_user_session_path
+      %section#page_title
+        .title= link_to "iBlog", root_path
+        .slogan write yours before too late
+    %section#main_container
+      #content_wrapper
+        %section#content_column
+          %section#flash
+            - flash.each do |key, value|
+              %div{:class => "flash #{key}"}= value
+          = yield
+      %section#sidebar_column
+        %section#sidebar_text.box
+          %h3 Sidebar text h3
+          %h4 Sidebar text h4, below is ul:
+          %ul
+            %li list item 1
+            %li list item 2
+            %li list item 3
+            %li list item 4
+        %section#sidebar_links.box
+          %h3 Links
+          %div= link_to "google", "http://google.com"
+          %div= link_to "facebook", "http://facebook.com"
+    %footer#page_footer
+      %hr
+      Copyright 2011

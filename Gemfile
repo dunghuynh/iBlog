@@ -5,8 +5,6 @@ gem 'rails', '3.1.1'
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
-
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -30,17 +28,31 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
+
+# Database
+
+# gem 'sqlite3', :group => [:development, :test]
+gem 'mysql2', :group => [:development, :test]
+gem 'pg', :group => :production
+# Problem with mysql solution: 
+# sudo install_name_tool -change libmysqlclient.18.dylib /usr/local/mysql/lib/libmysqlclient.18.dylib /Users/huynh/.rvm/gems/ruby-1.9.2-p290\@rails311/gems/mysql2-0.3.7/lib/mysql2/mysql2.bundle
+
+
 gem 'devise'
-gem 'haml-rails'  # to use haml instead of erb
-gem 'rack' # 1.3.4 give some anoying warning
+gem 'pg' # This is the extension library to access a PostgreSQL database from Ruby
+gem 'coffee-filter'
+
+
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'haml-rails'  # to use haml instead of erb
+  gem 'pickle' # Easy model creation and reference in your cucumber features
 end
 
 group :test do
   gem 'cucumber-rails'
   gem 'capybara'
   gem 'database_cleaner'
+  gem 'machinist' # makes it easy to create objects for use in tests. It generates data for the attributes you don't care aboutmakes it easy to create objects for use in tests. It generates data for the attributes you don't care about
 end
-
