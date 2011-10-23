@@ -42,6 +42,9 @@ gem 'devise'
 gem 'pg' # This is the extension library to access a PostgreSQL database from Ruby
 gem 'coffee-filter'
 
+group :production do
+  gem 'therubyracer-heroku'
+end
 
 
 group :development, :test do

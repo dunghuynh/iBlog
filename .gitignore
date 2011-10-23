@@ -3,4 +3,10 @@ db/*.sqlite3
 log/*.log
 tmp/
 .sass-cache/
+
+.project
 .DS_Store
+doc/
+*.log
+*.swp
+config/database.yml
