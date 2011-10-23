@@ -50,5 +50,12 @@ module IBlog
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+
+    # Machinist to automatically add a blueprint to your blueprints file whenever you generate a model
+    config.generators do |g|
+      g.fixture_replacement :machinist
+    end
+
   end
 end

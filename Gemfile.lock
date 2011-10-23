@@ -86,7 +86,7 @@ GEM
       thor (~> 0.14)
     json (1.6.1)
     json_pure (1.6.1)
-    machinist (1.0.6)
+    machinist (2.0.0.beta2)
     mail (2.3.0)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -186,7 +186,7 @@ DEPENDENCIES
   devise
   haml-rails
   jquery-rails
-  machinist
+  machinist (>= 2.0.0.beta2)
   mysql2
   pg
   pickle

@@ -45,13 +45,13 @@ Additional config:
     # Opendiff (FileMerge) to resolve merge conflicts:
     $ git config --global merge.tool opendiff
     
-## 2. [Init Rails project](https://github.com/DungHuynh/iBlog/tree/86a31ee13d0e5fb9a425418b5edd9cac73dcf62d)
+## 2. [Init Rails project](https://github.com/DungHuynh/iBlog/commit/86a31ee13d0e5fb9a425418b5edd9cac73dcf62d)
 
     $ rails new iblog -T
     
 Option -T to skip Test::Unit files (since we you RSpec)
 
-## 3. [Use some Gems](https://github.com/DungHuynh/iBlog/tree/7ba7717257aa2d0bfaf0f76e9dbbdabcff357768)
+## 3. [Use some Gems](https://github.com/DungHuynh/iBlog/commit/7ba7717257aa2d0bfaf0f76e9dbbdabcff357768)
 
 Insert gems to `Gemfile` then `bundle install`
 
@@ -63,15 +63,15 @@ Install rspec and cucumber
     $ rails generate rspec:install
     $ rails generate cucumber:install --capybara --rspec
 
-## [bad features with web_steps.rb](https://github.com/DungHuynh/iBlog/tree/32b1603db6081a57dcacdbab40acee66accc53a1)
+## [bad features with web_steps.rb](https://github.com/DungHuynh/iBlog/commit/32b1603db6081a57dcacdbab40acee66accc53a1)
 
-## 4. [Generate first scaffold: Article](https://github.com/DungHuynh/iBlog/tree/6507507b3fcc12031b14bd047b543988f817e5a3)
+## 4. [Generate first scaffold: Article](https://github.com/DungHuynh/iBlog/commit/6507507b3fcc12031b14bd047b543988f817e5a3)
 
     $ rails generate scaffold Article user_id:integer title:string teaser:text body:text version:string changelog:text message:string freezebody:text state:integer submitted:date accepted:date
     $ rake db:migrate
     $ rails server
     
-## 5. [Install Devise s.1](https://github.com/DungHuynh/iBlog/tree/13836759512b7397ebf87ab5a3d984f6db348e77)
+## 5. [Install Devise s.1](https://github.com/DungHuynh/iBlog/commit/13836759512b7397ebf87ab5a3d984f6db348e77)
     $ rails generate devise:install
 
 Now we are prompted for 4 things:
@@ -86,7 +86,7 @@ Now we are prompted for 4 things:
        On config/application.rb forcing your application to not access the DB
        or load models when precompiling your assets.
 
-## 6. [Install Devise s.2](https://github.com/DungHuynh/iBlog/tree/42468cfcf4214efe6ae5380d0a3906f392efa53e)
+## 6. [Install Devise s.2](https://github.com/DungHuynh/iBlog/commit/42468cfcf4214efe6ae5380d0a3906f392efa53e)
 
 Send email using Gmail. Add to `config/environments/development.rb`
 
@@ -109,7 +109,7 @@ Generate user model
 
     $ rails generate devise User
 
-## 7. [Install Devise s.3](https://github.com/DungHuynh/iBlog/tree/37e72cbf22dc6d494fb7c6846873fae1bb50a44b)
+## 7. [Install Devise s.3](https://github.com/DungHuynh/iBlog/commit/37e72cbf22dc6d494fb7c6846873fae1bb50a44b)
 
 Add confirmable as we want the email address of our users to be verified and the migration has to be changed accordingly. We also add lockable to limit login attempts with wrong passwords. Add to file `app/models/user.rb`
 
@@ -135,3 +135,23 @@ Edit controller to authenticate user. `app/controllers/articles_controller.rb`
 
     # only index and show are accessible for non-authenticated users
     before_filter :authenticate_user!, :except => [:index, :show]
+
+## 8. Change database to use MySql
+
+## 0. Add some style
+
+## 9. [Deploy to heroku](https://github.com/DungHuynh/iBlog/commit/0987b1b9c19bbe727152ffaf810b1c6f7dd4483d)
+
+[Sign up for a Heroku account](http://api.heroku.com/signup)
+
+    $ gem install heroku
+
+Tell Heroku your public key so that you can use Git to push
+
+    $ heroku keys:add
+    
+    $ heroku create iblog
+    ( heroku create --stack cedar iblog) -> iblog.herokuapp.com -> Celadon Cedar instead of current stack Badious Bamboo
+    
+    $ git push heroku master
+    ( git push heroku otherbranch:master)

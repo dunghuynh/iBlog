@@ -39,4 +39,9 @@ IBlog::Application.configure do
   # Devise mailer
   config.action_mailer.default_url_options = { :host => 'localhost:3000' }
   config.action_mailer.delivery_method = :test
+  
+  # Machinist disabling caching https://github.com/notahat/machinist/wiki/Object-Caching
+  Machinist.configure do |config|
+    config.cache_objects = false
+  end
 end

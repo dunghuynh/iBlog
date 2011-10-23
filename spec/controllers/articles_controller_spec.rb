@@ -19,6 +19,13 @@ require 'spec_helper'
 # that an instance is receiving a specific message.
 
 describe ArticlesController do
+  # include Devise::TestHelpers # Do not need since we use /spec/support/devise.rb
+
+  before (:each) do
+    @user = User.make!
+    sign_in @user
+  end
+
 
   # This should return the minimal set of attributes required to create a valid
   # Article. As you add validations to Article, be sure to
