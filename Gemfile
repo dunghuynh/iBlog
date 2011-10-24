@@ -58,4 +58,12 @@ group :test do
   gem 'capybara'
   gem 'database_cleaner'
   gem 'machinist', '>= 2.0.0.beta2' # makes it easy to create objects for use in tests. It generates data for the attributes you don't care aboutmakes it easy to create objects for use in tests. It generates data for the attributes you don't care about
+
+  gem 'spork', '~> 0.9.0.rc9'
+  gem 'rb-fsevent'
+  gem 'guard'
+  gem 'guard-spork'
+  gem 'guard-rspec'
+  gem 'guard-cucumber'
+  gem 'ruby_gntp' # growl notifier
 end

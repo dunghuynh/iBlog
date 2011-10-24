@@ -4,46 +4,62 @@ Personal experiments with Rails.
 
 See [CHANGELOG](https://github.com/DungHuynh/iBlog/blob/master/CHANGELOG.md)
 
-## 0. Add Machinist 2 and fix auto generated Rspec:
+## 11. Speed up testing with Spork and Guard
 
-[Machinist](https://github.com/notahat/machinist)`Gemfile`
-    
-    gem 'machinist', '>= 2.0.0.beta2'
+### [Spork](http://ruby.railstutorial.org/chapters/static-pages#sec:spork)
+`Gemfile`
 
-Run
+    group :test do
+      gem 'spork'
+      
+    end
 
-    $ rails generate machinist:install
+Next, bootstrap the Spork configuration:
 
-If you want Machinist to automatically add a blueprint to your blueprints file whenever you generate a model, add the following to your `config/application.rb` inside the Application class:
+    spork --bootstrap
 
-    config.generators do |g|
-      g.fixture_replacement :machinist
+Edit RSpec configuration file, `spec/spec_helper.rb` so that the environment gets loaded in a `prefork` block. which arranges for it to be loaded only once.
+
+    Spork.prefork do
+      <old code goes here>
     end
     
-`spec/support/blueprints.rb`
-    
-    require 'machinist/active_record'
-    
-    User.blueprint do
-      email { "user#{sn}@sample.com"}
-      password {"123456"}
-      confirmed_at {"2011-10-23 09:34:29"}
+    Spork.each_run do
     end
+
+Similarly for the file:
+
+    feature/support/env.rb
+
+Run RSpec without Spork
     
-Fix problem with machinist caching `config/environments/test.rb`
+    $ time rspec spec
 
-    # Machinist disabling caching
-      Machinist.configure do |config|
-        config.cache_objects = false
-      end
+Now with Spork
 
-Usage: `spec/controllers/articles_controller_spec.rb`
+    $ spork           # for RSpec
+    $ spork cucumber  # for Cucumber
 
-    describe ArticlesController do
+Then leave the terminal there. Spork is ready and listening on 8989! ...    
+In another terminal
+
+    $ time rspec --drb spec/
+    ($ time cucumber --drb)
+
+Adding the --drb option to the `.rspec` file.
+
+    --colour
+    --drb
+
+### [Guard](http://blog.carbonfive.com/2010/12/10/speedy-test-iterations-for-rails-3-with-spork-and-guard/)
+
+Guard is a modular filesystem event monitor utility written in Ruby. We will utilize a plugin for Guard that allows us to monitor changes to Rails files and restart Spork when necessary:
+
+Start Spork via Guard. The first thing we need to do is to tell Guard about spork.
+Add guard definition to your `Guardfile` with:
+
+    $ guard init spork
+    $ guard init cucumber
+    $ guard init rspec
     
-      before (:each) do
-          @user = User.make!
-          sign_in @user
-      end
-      ...
-    end
+    $ guard start
