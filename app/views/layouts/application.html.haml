@@ -11,7 +11,8 @@
         #nav_header
           %ul
             %li= link_to "iBlog", root_path
-            %li= link_to "Articles", articles_path
+            %li= link_to "Featured Articles", featured_articles_path
+            %li= link_to "All Articles", articles_path
         #nav_user
           %ul
             - if user_signed_in?
@@ -29,9 +30,7 @@
     %section#main_container
       #content_wrapper
         %section#content_column
-          %section#flash
-            - flash.each do |key, value|
-              %div{:class => "flash #{key}"}= value
+          = render "flashes"
           = yield
       %section#sidebar_column
         %section#sidebar_text.box

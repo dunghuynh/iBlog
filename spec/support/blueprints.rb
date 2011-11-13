@@ -14,3 +14,14 @@ User.blueprint do
   password {"123456"}
   confirmed_at {"2011-10-23 09:34:29"}
 end
+
+Article.blueprint do
+  user { User.make! }
+  title { "Article No.#{sn}" }
+  body { "Article body: #{sn}"}
+  teaser { "Article teaser: #{sn}"}
+  version {"Article version: #{sn}"}
+  changelog {"Article changelog: #{sn}"}
+  message {"Article message: #{sn}"}
+  state { 0 }
+end

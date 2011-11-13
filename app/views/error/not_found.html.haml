@@ -1,0 +1,11 @@
+!!! 5
+%html
+  %head
+    %title 404 - Not found
+    = stylesheet_link_tag "error"
+    = javascript_include_tag "error"
+    = csrf_meta_tags
+  %body
+    = render "flashes"
+    %h1 Error#404
+    %p Find me in app/views/error/404.html.haml

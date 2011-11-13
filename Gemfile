@@ -51,11 +51,14 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'haml-rails'  # to use haml instead of erb
   gem 'pickle' # Easy model creation and reference in your cucumber features
+  gem 'ruby-debug19', :require => 'ruby-debug'
+  gem 'awesome_print'
 end
 
 group :test do
   gem 'cucumber-rails'
   gem 'capybara'
+  gem 'shoulda-matchers'
   gem 'database_cleaner'
   gem 'machinist', '>= 2.0.0.beta2' # makes it easy to create objects for use in tests. It generates data for the attributes you don't care aboutmakes it easy to create objects for use in tests. It generates data for the attributes you don't care about
 

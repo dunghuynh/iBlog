@@ -1,15 +1,25 @@
 class ArticlesController < ApplicationController
   # only index and show are accessible for non-authenticated users
-  before_filter :authenticate_user!, :except => [:index, :show]
+  before_filter :authenticate_user!, :except => [:index, :show, :featured]
+  rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
 
   # GET /articles
   # GET /articles.json
   def index
-    @articles = Article.all
-
+    @articles = Article.where(:state => ['3', '4'])
+    debugger
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @articles }
+    end
+  end
+
+  def featured
+    @articles = Article.where(:state => ['4'])
+
+    respond_to do |format|
+      format.html { render 'index'}
+      format.xml { render json: @articles }
     end
   end
 
@@ -27,7 +37,7 @@ class ArticlesController < ApplicationController
   # GET /articles/new
   # GET /articles/new.json
   def new
-    @article = Article.new
+    @article = current_user.articles.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,13 +47,13 @@ class ArticlesController < ApplicationController
 
   # GET /articles/1/edit
   def edit
-    @article = Article.find(params[:id])
+    @article = current_user.articles.find(params[:id])
   end
 
   # POST /articles
   # POST /articles.json
   def create
-    @article = Article.new(params[:article])
+    @article = current_user.articles.new(params[:article])
 
     respond_to do |format|
       if @article.save
@@ -59,7 +69,7 @@ class ArticlesController < ApplicationController
   # PUT /articles/1
   # PUT /articles/1.json
   def update
-    @article = Article.find(params[:id])
+    @article = current_user.articles.find(params[:id])
 
     respond_to do |format|
       if @article.update_attributes(params[:article])
@@ -75,7 +85,7 @@ class ArticlesController < ApplicationController
   # DELETE /articles/1
   # DELETE /articles/1.json
   def destroy
-    @article = Article.find(params[:id])
+    @article = current_user.articles.find(params[:id])
     @article.destroy
 
     respond_to do |format|
@@ -83,4 +93,10 @@ class ArticlesController < ApplicationController
       format.json { head :ok }
     end
   end
+
+  protected
+    def record_not_found
+      flash[:error] = 'The article you requested could not be found.'
+      redirect_to error_404_url
+    end
 end

@@ -14,20 +14,22 @@
 ActiveRecord::Schema.define(:version => 20111018162258) do
 
   create_table "articles", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "title"
-    t.text     "teaser"
-    t.text     "body"
+    t.integer  "user_id",                   :null => false
+    t.string   "title",                     :null => false
+    t.text     "teaser",                    :null => false
+    t.text     "body",                      :null => false
     t.string   "version"
     t.text     "changelog"
     t.string   "message"
     t.text     "freezebody"
-    t.integer  "state"
+    t.integer  "state",      :default => 0, :null => false
     t.date     "submitted"
     t.date     "accepted"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "articles", ["user_id"], :name => "index_articles_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -45,12 +47,18 @@ ActiveRecord::Schema.define(:version => 20111018162258) do
     t.datetime "confirmation_sent_at"
     t.integer  "failed_attempts",                       :default => 0
     t.datetime "locked_at"
+    t.string   "fullname"
+    t.text     "shortbio"
+    t.string   "weburl"
+    t.integer  "country_id",                            :default => 1,  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
+  add_index "users", ["country_id"], :name => "index_users_on_country_id"
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["fullname"], :name => "index_users_on_fullname"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
 end

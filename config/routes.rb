@@ -1,9 +1,17 @@
 IBlog::Application.routes.draw do
+  get "error" => "error#index"
+
+  get "error/404" => 'error#not_found'
+
   get "home/about"
-  
+
   devise_for :users
 
-  resources :articles
+  resources :articles do
+    collection do
+      get 'featured'
+    end
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

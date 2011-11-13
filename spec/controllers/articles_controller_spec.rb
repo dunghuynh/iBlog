@@ -20,12 +20,7 @@ require 'spec_helper'
 
 describe ArticlesController do
   # include Devise::TestHelpers # Do not need since we use /spec/support/devise.rb
-
-  before (:each) do
-    @user = User.make!
-    sign_in @user
-  end
-
+  render_views
 
   # This should return the minimal set of attributes required to create a valid
   # Article. As you add validations to Article, be sure to
@@ -34,131 +29,293 @@ describe ArticlesController do
     {}
   end
 
+  it "redirect to 404 when record not found" do
+    get :show, :id => 69
+    response.should redirect_to(error_404_url)
+    flash[:error].should eq("The article you requested could not be found.")
+  end
+
   describe "GET index" do
-    it "assigns all articles as @articles" do
-      article = Article.create! valid_attributes
+    it "assigns all available articles as @articles" do
+      articles = []
+      (1..2).each { articles << Article.make!({:state => 3}) }
+      (1..2).each { articles << Article.make!({:state => 4}) }
+      normal_article = Article.make!
       get :index
-      assigns(:articles).should eq([article])
+      assigns(:articles).should eq(articles)
     end
+  end
+
+  describe "GET featured" do
+    it "assigns all featured articles as @articles" do
+      articles = []
+      (1..2).each { articles << Article.make!({:state => 4}) }
+      Article.make!({:state => 3})
+      normal_article = Article.make!
+      get :featured
+      assigns(:articles).should eq(articles)    end
   end
 
   describe "GET show" do
     it "assigns the requested article as @article" do
-      article = Article.create! valid_attributes
+      article = Article.make! valid_attributes
       get :show, :id => article.id
       assigns(:article).should eq(article)
+    end
+
+    it "redirects to 404 page when requested acticle not found" do
+      get :show, :id => 69
+      response.should redirect_to(error_404_url)
     end
   end
 
   describe "GET new" do
-    it "assigns a new article as @article" do
+    it "should not get new (anonymous)" do
+      get :new
+      response.should redirect_to(new_user_session_path)
+    end
+
+    it "assigns a new article as @article (signed in)" do
+      sign_in User.make!
       get :new
       assigns(:article).should be_a_new(Article)
+      response.should be_success
+    end
+
+    specify "new article has to belong to current user (signed in)" do
+      user = User.make!
+      sign_in user
+      get :new
+      assigns(:article).user == user
     end
   end
 
   describe "GET edit" do
-    it "assigns the requested article as @article" do
-      article = Article.create! valid_attributes
+    it "should not get edit (anonymous)" do
+      get :edit, :id => Article.make!.to_param
+      response.should redirect_to(new_user_session_url)
+    end
+
+    it "should not allow editing other's article (signed in)" do
+      sign_in User.make!
+      article = Article.make!
+      get :edit, :id => article.id
+      response.should redirect_to(error_404_url)
+    end
+
+    it "should allow editing own article (signed in)" do
+      user = User.make!
+      article = Article.make! :user => user
+      sign_in user
+      get :edit, :id => article.id
+      response.should be_success
+    end
+
+    it "assigns the requested article as @article (signed in)" do
+      user = User.make!
+      article = Article.make! :user => user
+      sign_in user
       get :edit, :id => article.id
       assigns(:article).should eq(article)
     end
   end
 
   describe "POST create" do
-    describe "with valid params" do
-      it "creates a new Article" do
-        expect {
-          post :create, :article => valid_attributes
-        }.to change(Article, :count).by(1)
-      end
-
-      it "assigns a newly created article as @article" do
-        post :create, :article => valid_attributes
-        assigns(:article).should be_a(Article)
-        assigns(:article).should be_persisted
-      end
-
-      it "redirects to the created article" do
-        post :create, :article => valid_attributes
-        response.should redirect_to(Article.last)
-      end
+    it "should not create article (anonymous)" do
+      expect {
+        post :create, :article => Article.make.attributes
+      }.to change(Article, :count).by(0)
+      expect {
+        post :create, :article => Article.make.attributes, :format => :json
+      }.to change(Article, :count).by(0)
     end
 
-    describe "with invalid params" do
-      it "assigns a newly created but unsaved article as @article" do
-        # Trigger the behavior that occurs when invalid params are submitted
-        Article.any_instance.stub(:save).and_return(false)
-        post :create, :article => {}
-        assigns(:article).should be_a_new(Article)
+    context "Signed in" do
+      before :each do
+        @user = User.make!
+        sign_in User.make!
       end
 
-      it "re-renders the 'new' template" do
-        # Trigger the behavior that occurs when invalid params are submitted
-        Article.any_instance.stub(:save).and_return(false)
-        post :create, :article => {}
-        response.should render_template("new")
+      describe "with valid params" do
+        it "creates a new Article" do
+          expect {
+            post :create, :article => Article.make.attributes
+          }.to change(Article, :count).by(1)
+        end
+
+        it "assigns a newly created article as @article" do
+          post :create, :article => Article.make.attributes
+          assigns(:article).should be_a(Article)
+          assigns(:article).should be_persisted
+        end
+
+        it "redirects to the created article" do
+          post :create, :article => Article.make.attributes
+          response.should redirect_to(Article.last)
+        end
+      end
+
+      describe "with invalid params" do
+        before(:all) do
+          # Trigger the behavior that occurs when invalid params are submitted
+          Article.any_instance.stub(:save).and_return(false)
+        end
+        it "assigns a newly created but unsaved article as @article" do
+          post :create, :article => {}
+          assigns(:article).should be_a_new(Article)
+        end
+
+        it "re-renders the 'new' template" do
+          post :create, :article => {}
+          response.should render_template("new")
+        end
+      end
+
+      context "html" do
+        describe "with valid params" do
+          it "creates a new article" do
+            expect {
+              post :create, :article => Article.make.attributes
+            }.to change(Article, :count).by(1)
+          end
+
+          it "assigns a newly created article as @article" do
+            post :create, :article => Article.make.attributes
+            assigns(:article).should be_a(Article)
+            assigns(:article).should be_persisted
+          end
+
+          it "redirects to the created article" do
+            post :create, :article => Article.make.attributes
+            response.should redirect_to(Article.last)
+          end
+        end
+      end
+
+      context "json" do
+        describe "with valid params" do
+          it "creates a new Article" do
+            expect {
+              post :create, :article => Article.make.attributes, :format => :json
+            }.to change(Article, :count).by(1)
+          end
+
+          it "should return all attributes" do
+            def deep_compare(a,b)
+              if a.is_a?(Hash)
+                a.all? { |key, value| deep_compare(a[key], b[key.to_s]) }
+              else
+                b.should == a
+              end
+            end
+
+            post :create, :article => Article.make.attributes, :format => :json
+            expected_attrs = Article.last.to_json
+            attrs = response.body
+            deep_compare(expected_attrs, attrs)
+          end
+        end
       end
     end
   end
 
   describe "PUT update" do
-    describe "with valid params" do
-      it "updates the requested article" do
-        article = Article.create! valid_attributes
-        # Assuming there are no other articles in the database, this
-        # specifies that the Article created on the previous line
-        # receives the :update_attributes message with whatever params are
-        # submitted in the request.
-        Article.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
-        put :update, :id => article.id, :article => {'these' => 'params'}
-      end
-
-      it "assigns the requested article as @article" do
-        article = Article.create! valid_attributes
-        put :update, :id => article.id, :article => valid_attributes
-        assigns(:article).should eq(article)
-      end
-
-      it "redirects to the article" do
-        article = Article.create! valid_attributes
-        put :update, :id => article.id, :article => valid_attributes
-        response.should redirect_to(article)
-      end
+    it "should not update article (anonymous)" do
+      article = Article.make!
+      article.should_not_receive(:update_attributes)
+      put :update, :id => article.id, :article => {'these' => 'params'}
     end
 
-    describe "with invalid params" do
-      it "assigns the article as @article" do
-        article = Article.create! valid_attributes
-        # Trigger the behavior that occurs when invalid params are submitted
-        Article.any_instance.stub(:save).and_return(false)
-        put :update, :id => article.id, :article => {}
-        assigns(:article).should eq(article)
+    context "signed in" do
+      before :each do
+        @user = User.make!
+        @article = Article.make!(:user => @user)
+        sign_in @user
       end
 
-      it "re-renders the 'edit' template" do
-        article = Article.create! valid_attributes
-        # Trigger the behavior that occurs when invalid params are submitted
-        Article.any_instance.stub(:save).and_return(false)
-        put :update, :id => article.id, :article => {}
-        response.should render_template("edit")
+      describe "with valid params" do
+
+        it "doesn't update the requested article linked to other user" do
+          others_article = Article.make!
+          others_article.should_not_receive(:update_attributes)
+          put :update, :id => others_article.id, :article => {'these' => 'params'}
+          response.should redirect_to error_404_url
+        end
+
+        it "updates the requested article of signed user" do
+          Article.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
+          put :update, :id => @article.id, :article => {'these' => 'params'}
+        end
+
+        it "assigns the requested article as @article" do
+          put :update, :id => @article.id, :article => Article.make.attributes
+          assigns(:article).should eq(@article)
+        end
+
+        it "redirects to the article" do
+          put :update, :id => @article.id, :article => Article.make.attributes
+          response.should redirect_to(@article)
+        end
+      end
+
+      describe "with invalid params" do
+        it "assigns the article as @article" do
+          # Trigger the behavior that occurs when invalid params are submitted
+          Article.any_instance.stub(:save).and_return(false)
+          put :update, :id => @article.id, :article => {}
+          assigns(:article).should eq(@article)
+        end
+
+        it "re-renders the 'edit' template" do
+          # Trigger the behavior that occurs when invalid params are submitted
+          Article.any_instance.stub(:save).and_return(false)
+          put :update, :id => @article.id, :article => {}
+          response.should render_template("edit")
+        end
       end
     end
   end
 
   describe "DELETE destroy" do
-    it "destroys the requested article" do
-      article = Article.create! valid_attributes
-      expect {
-        delete :destroy, :id => article.id
-      }.to change(Article, :count).by(-1)
+    context "anonymous" do
+      it "doesn't destroy the requested article (anonymous)" do
+        article = Article.make!
+        expect {
+          delete :destroy, :id => article.id
+        }.to change(Article, :count).by(0)
+      end
     end
 
-    it "redirects to the articles list" do
-      article = Article.create! valid_attributes
-      delete :destroy, :id => article.id
-      response.should redirect_to(articles_url)
+    context "signed in" do
+      before :each do
+        @user = User.make!
+        @article = Article.make!(:user => @user)
+        sign_in @user
+      end
+
+      it "destroys the requested article linked to signed user" do
+        expect {
+          delete :destroy, :id => @article.id
+        }.to change(Article, :count).by(-1)
+      end
+
+      it "does not destroy the requested article linked to other user" do
+        others_article = Article.make!
+        expect {
+          delete :destroy, :id => others_article.id
+        }.to change(Article, :count).by(0)
+      end
+
+      it "redirects to 404 page when the article is linked to other user" do
+        others_article = Article.make!
+        delete :destroy, :id => others_article.id
+        response.should redirect_to(error_404_url)
+      end
+
+      it "redirects to the articles list" do
+        delete :destroy, :id => @article.id
+        response.should redirect_to(articles_url)
+      end
     end
   end
-
 end
