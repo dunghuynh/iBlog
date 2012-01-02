@@ -7,7 +7,6 @@ class ArticlesController < ApplicationController
   # GET /articles.json
   def index
     @articles = Article.where(:state => ['3', '4'])
-    debugger
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @articles }
