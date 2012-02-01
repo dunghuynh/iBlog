@@ -18,7 +18,7 @@
             - if user_signed_in?
               %li
                 %span#currentuser= current_user.email
-              \ 
+              %li= link_to "My Articles", myarticles_articles_path
               %li= link_to "My Profile", edit_user_registration_path
               %li= link_to "Sign out", destroy_user_session_path, :method => :delete
             - else

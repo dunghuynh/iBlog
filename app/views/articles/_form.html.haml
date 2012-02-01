@@ -6,38 +6,48 @@
         - @article.errors.full_messages.each do |msg|
           %li= msg
 
+= form_for(@article) do |f|
+  - if @article.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(@article.errors.count, "error")
+        prohibited this article from being saved:
+      %ul
+        - @article.errors.full_messages.each do |msg|
+          %li= msg
+  -# Title and Teaser can not be changed once an article has been accepted
+  - if @article.state < 3
+    .field
+      %label{:for => "article_title"} Title (Plaintext, 80 characters max)
+      %br/
+      = f.text_field :title, :size => "100%", :class => "fullwidth"
+    .field
+      %label{:for => "article_teaser"} Teaser (Plaintext, 500 characters max)
+      %br/
+      = f.text_area :teaser, :size => "100%x5", :class => "fullwidth"
+  - else
+    .field
+      %label{:for => "article_title"} Title (can not be changed as this article has already been accepted)
+      %br/
+      = f.text_field :title, :readonly => true,  :size => "100%", :class => "fullwidth"
+    .field
+      %label{:for => "article_teaser"} Teaser (can not be changed as this article has already been accepted)
+      %br/
+      = f.text_area :teaser, :readonly => true, :size => "100%x5", :class => "fullwidth"
   .field
-    = f.label :user_id
-    = f.number_field :user_id
+    %label{:for => "article_body"}
+      Your Article (Textile: RedCloth with Coderay - #{link_to "What is this?", '#'})
+    %br/
+    = f.text_area :body, :size => "100%x40", :class => "fullwidth"
   .field
-    = f.label :title
-    = f.text_field :title
+    %label{:for => "version"} Version of Rails and special Gems used (Plaintext, 120 characters max)
+    %br/
+    = f.text_field :version, :size => "100%", :class => "fullwidth"
   .field
-    = f.label :teaser
-    = f.text_area :teaser
-  .field
-    = f.label :body
-    = f.text_area :body
-  .field
-    = f.label :version
-    = f.text_field :version
-  .field
-    = f.label :changelog
-    = f.text_area :changelog
-  .field
-    = f.label :message
-    = f.text_field :message
-  .field
-    = f.label :freezebody
-    = f.text_area :freezebody
-  .field
-    = f.label :state
-    = f.number_field :state
-  .field
-    = f.label :submitted
-    = f.date_select :submitted
-  .field
-    = f.label :accepted
-    = f.date_select :accepted
+    %label{:for => "article_body"} Changelog of this Article (Plaintext, 2000 characters max)
+    %br/
+    = f.text_area :changelog, :size => "100%x10", :class => "fullwidth"
   .actions
-    = f.submit 'Save'
+    = f.submit :class => "awesome custom red"
+    = link_to 'View this article', @article, :class => "awesome custom black"
+    = link_to 'Return to my articles', myarticles_articles_path, :class => "awesome custom black"

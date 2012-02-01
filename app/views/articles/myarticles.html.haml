@@ -1,0 +1,39 @@
+%h2 Manage your articles
+%p= link_to 'Start writing a new article', new_article_path
+%section#myarticles
+  - if !@myarticles.empty?
+    - @myarticles.each do |article|
+      %article.myarticle
+        .title= article.title
+        .created
+          Created / Last updated: #{article.created_at.strftime("%B %d, %Y")} / #{article.updated_at.strftime("%B %d, %Y")}
+        / the states:  0...draft, 1...submitted, 2...rejected, 3...full article, 4...featured article
+        - if article.state == 0
+          .state Current status: Draft (visible via direct link)
+        - if article.state == 1
+          .state
+            Current status: Submitted (#{article.submitted.strftime("%B %d, %Y")})
+        - if article.state == 2
+          .state
+            Current status: Rejected (#{article.submitted.strftime("%B %d, %Y")})
+          .reject Please read the comment, review your article and submit it again!
+          .rejectmsg= article.message
+        - if article.state == 3
+          .state
+            Current status: Accepted and published as a standard article (#{article.accepted.strftime("%B %d, %Y")})
+        - if article.state == 4
+          .state
+            Current status: Accepted and published as a
+            %b featured article
+            (#{article.accepted.strftime("%B %d, %Y")})
+        .actions
+          %span.show= link_to 'View', article
+          %span.edit= link_to 'Edit', edit_article_path(article)
+          - if (article.state == 0) or (article.state == 2)
+            %span= link_to "Submit now", submit_article_path(article), :method => :put
+          - if article.state < 3
+            %span.delete= link_to 'Delete', article, :confirm => 'Are you sure?', :method => :delete
+  - else
+    %p
+      You have not written any articles yet. Start to contribute:
+      = link_to 'New Article', new_article_path, :class => "awesome custom red"

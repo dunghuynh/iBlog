@@ -56,6 +56,22 @@ describe ArticlesController do
       assigns(:articles).should eq(articles)    end
   end
 
+  describe "GET myarticles" do
+    it "redirects to new session path (anonymous)" do
+      get :myarticles
+      response.should redirect_to(new_user_session_path)
+    end
+
+    it "assigns myarticles" do
+      user = User.make!
+      (1..3).each { Article.make! }
+      user_articles = (1..3).collect { Article.make!(:user => user) }
+      sign_in user
+      get :myarticles
+      assigns(:myarticles).should eq(user_articles)
+    end
+  end
+
   describe "GET show" do
     it "assigns the requested article as @article" do
       article = Article.make! valid_attributes
@@ -247,6 +263,13 @@ describe ArticlesController do
           put :update, :id => @article.id, :article => {'these' => 'params'}
         end
 
+        it "should not update title/teaser if published" do
+          @article.update_attribute(:state, 3)
+          put :update, :id => @article.id, :article => {:title => "new title", :teaser => "new teaser" }
+          @article.reload.title.should_not == "new title"
+          @article.reload.teaser.should_not == "new teaser"
+        end
+
         it "assigns the requested article as @article" do
           put :update, :id => @article.id, :article => Article.make.attributes
           assigns(:article).should eq(@article)
@@ -256,6 +279,7 @@ describe ArticlesController do
           put :update, :id => @article.id, :article => Article.make.attributes
           response.should redirect_to(@article)
         end
+
       end
 
       describe "with invalid params" do
@@ -303,7 +327,7 @@ describe ArticlesController do
         others_article = Article.make!
         expect {
           delete :destroy, :id => others_article.id
-        }.to change(Article, :count).by(0)
+        }.to_not change(Article, :count)
       end
 
       it "redirects to 404 page when the article is linked to other user" do
@@ -312,10 +336,84 @@ describe ArticlesController do
         response.should redirect_to(error_404_url)
       end
 
+      it "does not destroy accepted/featured article" do
+        [3,4].each do |accepted_state|
+          @article.update_attribute :state, accepted_state
+          expect {
+            delete :destroy, :id => @article.id
+          }.to_not change(Article, :count)
+          flash[:error].should == 'The article could not be deleted.'
+        end
+      end
+
       it "redirects to the articles list" do
         delete :destroy, :id => @article.id
         response.should redirect_to(articles_url)
       end
     end
   end
+
+  describe "PUT submit" do
+
+    it "should not submit article (anonymous)" do
+      article = Article.make!
+      put :submit, :id => article.id
+      response.should redirect_to(new_user_session_path)
+    end
+
+    context "signed in" do
+      before :each do
+        @user = User.make!
+        @article = Article.make!(:user => @user)
+        sign_in @user
+      end
+
+      it "should not submit article for other user" do
+        others_article = Article.make!
+        put :submit, :id => others_article.id
+        response.should redirect_to(error_404_url)
+        flash[:error].should == 'The article you requested could not be found.'
+      end
+
+      it "submits draft article" do
+        @article.update_attribute(:state, 0)
+        put :submit, :id => @article.id
+        response.should redirect_to(myarticles_articles_path)
+        flash[:notice].should == 'Your article was successfully submitted for approval.'
+        @article.reload.state.should == 1
+      end
+
+      it "resubmits rejected article" do
+        @article.update_attribute(:state, 2)
+        put :submit, :id => @article.id
+        response.should redirect_to(myarticles_articles_path)
+        flash[:notice].should == 'Your article was successfully submitted for approval.'
+        @article.reload.state.should == 1
+      end
+
+      it "should not submit submitted article again" do
+        @article.update_attribute(:state, 1)
+        put :submit, :id => @article.id
+        response.should redirect_to(myarticles_articles_path)
+        flash[:error].should == 'This article can not be submitted.'
+      end
+
+      it "should not submit accepted article again" do
+        @article.update_attribute(:state, 3)
+        put :submit, :id => @article.id
+        response.should redirect_to(myarticles_articles_path)
+        flash[:error].should == 'This article can not be submitted.'
+        @article.reload.state.should == 3
+      end
+
+      it "should not submit featured article again" do
+        @article.update_attribute(:state, 4)
+        put :submit, :id => @article.id
+        response.should redirect_to(myarticles_articles_path)
+        flash[:error].should == 'This article can not be submitted.'
+        @article.reload.state.should == 4
+      end
+    end
+  end
+
 end

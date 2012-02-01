@@ -59,7 +59,7 @@ IBlog::Application.configure do
   config.active_support.deprecation = :notify
 
   # Devise mailer
-  config.action_mailer.default_url_options = { :host => 'iblog.heroku.com' }
+  config.action_mailer.default_url_options = { :host => 'iblog.herokuapp.com' }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     :address              => "smtp.gmail.com",

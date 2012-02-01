@@ -18,7 +18,15 @@ class ArticlesController < ApplicationController
 
     respond_to do |format|
       format.html { render 'index'}
-      format.xml { render json: @articles }
+      format.json { render json: @articles }
+    end
+  end
+
+  def myarticles
+    @myarticles = current_user.articles.all
+    respond_to do |format|
+      format.html
+      format.json { render json: @myarticles }
     end
   end
 
@@ -70,6 +78,11 @@ class ArticlesController < ApplicationController
   def update
     @article = current_user.articles.find(params[:id])
 
+    if @article.state > 2
+      params[:article].delete(:title)
+      params[:article].delete(:teaser)
+    end
+
     respond_to do |format|
       if @article.update_attributes(params[:article])
         format.html { redirect_to @article, notice: 'Article was successfully updated.' }
@@ -85,10 +98,39 @@ class ArticlesController < ApplicationController
   # DELETE /articles/1.json
   def destroy
     @article = current_user.articles.find(params[:id])
-    @article.destroy
+
+    # only draft, submitted or rejected articles can be deleted by the user
+    if @article.state < 3
+      @article.destroy
+    else
+      flash[:error] = 'The article could not be deleted.'
+    end
 
     respond_to do |format|
       format.html { redirect_to articles_url }
+      format.json { head :ok }
+    end
+  end
+
+  def submit
+    @article = current_user.articles.find(params[:id])
+
+    # submit only if article is currently in draft or rejected state
+    if [0,2].include?(@article.state)
+      @article.state = 1
+      @article.submitted = Time.now
+
+      if @article.save
+        flash[:notice] = 'Your article was successfully submitted for approval.'
+      else
+        flash[:error] = 'There was an error while submitting your article.'
+      end
+    else
+      flash[:error] = 'This article can not be submitted.'
+    end
+
+    respond_to do |format|
+      format.html { redirect_to(:action => 'myarticles') }
       format.json { head :ok }
     end
   end

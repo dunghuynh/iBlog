@@ -10,6 +10,10 @@ IBlog::Application.routes.draw do
   resources :articles do
     collection do
       get 'featured'
+      get 'myarticles'
+    end
+    member do
+      put 'submit'
     end
   end
 
