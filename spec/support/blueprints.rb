@@ -25,3 +25,9 @@ Article.blueprint do
   message {"Article message: #{sn}"}
   state { 0 }
 end
+
+Comment.blueprint do
+  user { User.make! }
+  article { Article.make! }
+  body { "Comment body: #{sn}" }
+end

@@ -15,6 +15,8 @@ IBlog::Application.routes.draw do
     member do
       put 'submit'
     end
+
+    resources :comments, :only => [:create, :destroy]
   end
 
   # The priority is based upon order of creation:
