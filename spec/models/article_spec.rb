@@ -37,4 +37,23 @@ describe Article do
     it {should validate_numericality_of(:state)}
     it {should ensure_inclusion_of(:state).in_range(0..4)}
   end
+
+  describe 'self.search' do
+    before :each do
+      @article1 = Article.make! :title => "First title", :teaser => "First teaser"
+      @article2 = Article.make! :title => "Second title", :teaser => "Second teaser"
+    end
+
+    it 'returns article with title contains search query' do
+      Article.search("first tit").should == [@article1]
+    end
+
+    it 'returns article with teaser contains search query' do
+      Article.search("Second teaser").should == [@article2]
+    end
+
+    it 'should not return article with title and teaser does not contain search query' do
+      Article.search("First").should_not include(@article2)
+    end
+  end
 end

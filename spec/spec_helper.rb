@@ -32,13 +32,32 @@ Spork.prefork do
     # If you're not using ActiveRecord, or you'd prefer not to run each of your
     # examples within a transaction, remove the following line or assign false
     # instead of true.
-    config.use_transactional_fixtures = true
+    config.use_transactional_fixtures = false
 
     # If true, the base class of anonymous controllers will be inferred
     # automatically. This will be the default behavior in future versions of
     # rspec-rails.
     config.infer_base_class_for_anonymous_controllers = false
+
+    config.before(:suite) do
+      DatabaseCleaner.strategy = :truncation
+    end
+
+    config.before(:each) do
+      DatabaseCleaner.start
+    end
+
+    config.after(:each) do
+      DatabaseCleaner.clean
+    end
   end
+
+  # Drivers: rack_test, webkit, selenium, selenium_chrome
+  Capybara.register_driver :selenium_chrome do |app|
+    Capybara::Selenium::Driver.new(app, :browser => :chrome)
+  end
+  # Capybara.default_driver :rake_test
+  Capybara.javascript_driver = :webkit
 end
 
 Spork.each_run do
@@ -54,9 +73,3 @@ end
 #   and during each_run!
 # - These instructions should self-destruct in 10 seconds.  If they don't,
 #   feel free to delete them.
-#
-
-
-
-
-

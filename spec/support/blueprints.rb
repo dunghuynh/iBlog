@@ -23,7 +23,8 @@ Article.blueprint do
   version {"Article version: #{sn}"}
   changelog {"Article changelog: #{sn}"}
   message {"Article message: #{sn}"}
-  state { 0 }
+  state { Article::STATES[:accepted] }
+  accepted { Time.now }
 end
 
 Comment.blueprint do

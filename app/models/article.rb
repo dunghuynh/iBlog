@@ -5,6 +5,14 @@ class Article < ActiveRecord::Base
 
   attr_accessible :title, :teaser, :body, :version, :changelog
 
+  STATES = {
+    :draft => 0,
+    :submitted => 1,
+    :rejected => 2,
+    :accepted => 3,
+    :featured => 4
+  }
+
   validates :user_id, :presence => true
   validates :title, :presence => true, :length => {:maximum => 80}
   validates :teaser, :presence => true, :length => {:maximum => 500}
@@ -12,7 +20,7 @@ class Article < ActiveRecord::Base
   validates :version, :length => {:maximum => 120}
   validates :changelog, :length => {:maximum => 2000}
   validates :message, :length => {:maximum => 5000}
-  validates :state, :presence => true, :numericality => true, :inclusion => {:in => 0..4}
+  validates :state, :presence => true, :numericality => true, :inclusion => {:in => STATES.values}
 
   def count_ratings
     self.ratings.all.count
@@ -21,5 +29,17 @@ class Article < ActiveRecord::Base
   def avg_rating
     avg = self.ratings.average(:stars)
     avg ||= 0
+  end
+
+  def approved?
+    state.in? [STATES[:accepted], STATES[:featured]]
+  end
+
+  def self.search(search)
+    if search
+      where('title LIKE ? or teaser LIKE ?', "%#{search}%", "%#{search}%")
+    else
+      scoped
+    end
   end
 end

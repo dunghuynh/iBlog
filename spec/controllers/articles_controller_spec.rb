@@ -38,9 +38,9 @@ describe ArticlesController do
   describe "GET index" do
     it "assigns all available articles as @articles" do
       articles = []
-      (1..2).each { articles << Article.make!({:state => 3}) }
-      (1..2).each { articles << Article.make!({:state => 4}) }
-      normal_article = Article.make!
+      (1..2).each { articles << Article.make!({:state => Article::STATES[:accepted]}) }
+      (1..2).each { articles << Article.make!({:state => Article::STATES[:featured]}) }
+      normal_article = Article.make!(:state => Article::STATES[:draft])
       get :index
       assigns(:articles).should eq(articles)
     end
@@ -49,11 +49,12 @@ describe ArticlesController do
   describe "GET featured" do
     it "assigns all featured articles as @articles" do
       articles = []
-      (1..2).each { articles << Article.make!({:state => 4}) }
-      Article.make!({:state => 3})
+      (1..2).each { articles << Article.make!({:state => Article::STATES[:featured]}) }
+      Article.make!({:state => Article::STATES[:accepted]})
       normal_article = Article.make!
       get :featured
-      assigns(:articles).should eq(articles)    end
+      assigns(:articles).should eq(articles)
+    end
   end
 
   describe "GET myarticles" do
@@ -264,7 +265,7 @@ describe ArticlesController do
         end
 
         it "should not update title/teaser if published" do
-          @article.update_attribute(:state, 3)
+          @article.update_attribute(:state, Article::STATES[:accepted])
           put :update, :id => @article.id, :article => {:title => "new title", :teaser => "new teaser" }
           @article.reload.title.should_not == "new title"
           @article.reload.teaser.should_not == "new teaser"
@@ -313,7 +314,7 @@ describe ArticlesController do
     context "signed in" do
       before :each do
         @user = User.make!
-        @article = Article.make!(:user => @user)
+        @article = Article.make!(:user => @user, :state => Article::STATES[:draft])
         sign_in @user
       end
 
@@ -337,7 +338,7 @@ describe ArticlesController do
       end
 
       it "does not destroy accepted/featured article" do
-        [3,4].each do |accepted_state|
+        [Article::STATES[:accepted], Article::STATES[:featured]].each do |accepted_state|
           @article.update_attribute :state, accepted_state
           expect {
             delete :destroy, :id => @article.id
@@ -376,42 +377,42 @@ describe ArticlesController do
       end
 
       it "submits draft article" do
-        @article.update_attribute(:state, 0)
+        @article.update_attribute(:state, Article::STATES[:draft])
         put :submit, :id => @article.id
         response.should redirect_to(myarticles_articles_path)
         flash[:notice].should == 'Your article was successfully submitted for approval.'
-        @article.reload.state.should == 1
+        @article.reload.state.should == Article::STATES[:submitted]
       end
 
       it "resubmits rejected article" do
-        @article.update_attribute(:state, 2)
+        @article.update_attribute(:state, Article::STATES[:rejected])
         put :submit, :id => @article.id
         response.should redirect_to(myarticles_articles_path)
         flash[:notice].should == 'Your article was successfully submitted for approval.'
-        @article.reload.state.should == 1
+        @article.reload.state.should == Article::STATES[:submitted]
       end
 
       it "should not submit submitted article again" do
-        @article.update_attribute(:state, 1)
+        @article.update_attribute(:state, Article::STATES[:submitted])
         put :submit, :id => @article.id
         response.should redirect_to(myarticles_articles_path)
         flash[:error].should == 'This article can not be submitted.'
       end
 
       it "should not submit accepted article again" do
-        @article.update_attribute(:state, 3)
+        @article.update_attribute(:state, Article::STATES[:accepted])
         put :submit, :id => @article.id
         response.should redirect_to(myarticles_articles_path)
         flash[:error].should == 'This article can not be submitted.'
-        @article.reload.state.should == 3
+        @article.reload.state.should == Article::STATES[:accepted]
       end
 
       it "should not submit featured article again" do
-        @article.update_attribute(:state, 4)
+        @article.update_attribute(:state, Article::STATES[:featured])
         put :submit, :id => @article.id
         response.should redirect_to(myarticles_articles_path)
         flash[:error].should == 'This article can not be submitted.'
-        @article.reload.state.should == 4
+        @article.reload.state.should == Article::STATES[:featured]
       end
     end
   end

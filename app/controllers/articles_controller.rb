@@ -6,7 +6,11 @@ class ArticlesController < ApplicationController
   # GET /articles
   # GET /articles.json
   def index
-    @articles = Article.where(:state => ['3', '4'])
+    @articles = Article
+      .where(:state => [Article::STATES[:accepted], Article::STATES[:featured]])
+      .search(params[:search])
+      .order('accepted desc')
+
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @articles }
@@ -14,7 +18,7 @@ class ArticlesController < ApplicationController
   end
 
   def featured
-    @articles = Article.where(:state => ['4'])
+    @articles = Article.where(:state => Article::STATES[:featured])
 
     respond_to do |format|
       format.html { render 'index'}
@@ -83,7 +87,7 @@ class ArticlesController < ApplicationController
   def update
     @article = current_user.articles.find(params[:id])
 
-    if @article.state > 2
+    if @article.approved?
       params[:article].delete(:title)
       params[:article].delete(:teaser)
     end
@@ -105,10 +109,10 @@ class ArticlesController < ApplicationController
     @article = current_user.articles.find(params[:id])
 
     # only draft, submitted or rejected articles can be deleted by the user
-    if @article.state < 3
-      @article.destroy
-    else
+    if @article.approved?
       flash[:error] = 'The article could not be deleted.'
+    else
+      @article.destroy
     end
 
     respond_to do |format|
@@ -121,8 +125,8 @@ class ArticlesController < ApplicationController
     @article = current_user.articles.find(params[:id])
 
     # submit only if article is currently in draft or rejected state
-    if [0,2].include?(@article.state)
-      @article.state = 1
+    if @article.state.in? [Article::STATES[:draft], Article::STATES[:rejected]]
+      @article.state = Article::STATES[:submitted]
       @article.submitted = Time.now
 
       if @article.save
