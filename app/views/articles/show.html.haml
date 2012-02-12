@@ -1,5 +1,8 @@
 %section#articleheader
   %h2= @article.title
+  %ul.stars.floatstars
+    %li.yellowstars{:style => "width: #{@article.avg_rating * 25}px !important;"}
+    %li.text #{@article.avg_rating} average from #{pluralize(@article.count_ratings, "vote")}
   .byline
     written by #{link_to @article.user.fullname, ""}
   .avatar
@@ -9,6 +12,31 @@
   = @article.body
   -# comments are available for published articles only
   - if @article.state > 2
+    %section#rating
+      - if user_signed_in?
+        = form_for [@article, @rating_currentuser] do |f|
+          #ratingbox
+            %ul#ratingbuttons
+              %li
+                = f.radio_button :stars, "5"
+                %span Excellent
+              %li
+                = f.radio_button :stars, "4"
+                %span Very Good
+              %li
+                = f.radio_button :stars, "3"
+                %span Good
+              %li
+                = f.radio_button :stars, "2"
+                %span Average
+              %li
+                = f.radio_button :stars, "1"
+                %span Poor
+            .center= f.submit "Rate this article", :class => "awesome custom red"
+      - else
+        #ratingbox
+          = link_to "Sign in", new_user_session_path
+          to rate this article
     %section#comments
       - @comments.each do |comment|
         %article.comment

@@ -35,6 +35,11 @@ class ArticlesController < ApplicationController
   def show
     @article = Article.find(params[:id])
     @comments = @article.comments
+
+    if user_signed_in?
+      @rating_currentuser = @article.ratings.find_by_user_id(current_user.id)
+      @rating_currentuser ||= current_user.ratings.new
+    end
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @article }

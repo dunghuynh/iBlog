@@ -31,3 +31,9 @@ Comment.blueprint do
   article { Article.make! }
   body { "Comment body: #{sn}" }
 end
+
+Rating.blueprint do
+  user { User.make! }
+  article {Article.make! }
+  stars { 0 }
+end

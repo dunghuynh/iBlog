@@ -17,6 +17,7 @@ IBlog::Application.routes.draw do
     end
 
     resources :comments, :only => [:create, :destroy]
+    resources :ratings, :only => [:create, :update, :destroy]
   end
 
   # The priority is based upon order of creation:
