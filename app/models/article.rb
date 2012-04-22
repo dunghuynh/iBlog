@@ -12,6 +12,7 @@ class Article < ActiveRecord::Base
     :accepted => 3,
     :featured => 4
   }
+  ACCEPTED_STATES = [STATES[:accepted], STATES[:featured]]
 
   validates :user_id, :presence => true
   validates :title, :presence => true, :length => {:maximum => 80}
@@ -32,7 +33,7 @@ class Article < ActiveRecord::Base
   end
 
   def approved?
-    state.in? [STATES[:accepted], STATES[:featured]]
+    state.in? ACCEPTED_STATES
   end
 
   def self.search(search)
