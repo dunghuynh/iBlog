@@ -1,3 +1,87 @@
 // Place all the styles related to the Articles controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+/* INDEX */
+#articles {
+  article {
+    margin-bottom: 15px;
+  }
+  .teaser {
+    margin-top: 5px;
+  }
+}
+
+/* SHOW */
+#article {
+  #article-header {
+    .avatar {
+      margin: 5px 10px 3px 0;
+      img {
+        width: 72px;
+        height: 72px;
+      }
+    }
+    .teaser {
+      clear: bottom;
+    }
+  }
+
+  #article-body {
+    margin-top: 10px;
+    alear: left;
+  }
+
+  #comments {
+    .comment {
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+  }
+  #newcomment {
+    margin-top: 10px;
+    .avatar {
+      margin-bottom: 5px;
+    }
+    textarea {
+      height: 40px;
+      width: 100%;
+    }
+  }
+
+  #rating {
+    ul {
+      margin: 0;
+      list-style: none;
+      li {
+        margin-right: 10px;
+        display: inline;
+        label {
+          display: inline;
+        }
+        input[type=radio]{
+          display: inline;
+        }
+      }
+    }
+  }
+}
+@media (min-width: 768px) and (max-width: 1200px) {
+  #article #article-header .avatar img{
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* MY ARTICLES */
+#my-articles {
+  margin-top: 20px;
+  .myarticle {
+    margin-bottom: 15px;
+  }
+}
+
+/* NEW ARTICLE */
+#new-article {
+}

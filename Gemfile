@@ -12,6 +12,7 @@ group :assets do
   gem 'sass-rails',   '~> 3.1.4'
   gem 'coffee-rails', '~> 3.1.1'
   gem 'uglifier', '>= 1.0.3'
+  gem 'twitter-bootstrap-rails'
 end
 
 gem 'jquery-rails'
@@ -43,7 +44,7 @@ gem 'pg' # This is the extension library to access a PostgreSQL database from Ru
 gem 'coffee-filter'
 
 group :production do
-  gem 'therubyracer-heroku'
+  gem 'therubyracer'
 end
 
 

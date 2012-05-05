@@ -1,0 +1,37 @@
+%header#header
+  %nav.navbar.navbar-fixed-top
+    .navbar-inner
+      .container
+        = link_to "iBlog", root_path, :class => "brand"
+        %a.btn.btn-navbar(data-target=".nav-collapse" data-toggle="collapse")
+          %span.icon-bar
+          %span.icon-bar
+          %span.icon-bar
+        .container.nav-collapse
+          %ul.nav
+            %li= link_to "Featured Articles", featured_articles_path
+            %li= link_to "All Articles", articles_path
+          = form_tag articles_path, :method => "get", :class => "navbar-search pull-left" do
+            = text_field_tag :search, params[:search], :class => "search-query span2", :placeholder => "Search"
+          %ul.nav.pull-right
+            - if user_signed_in?
+              %li= link_to "My Articles", myarticles_articles_path
+              %li.divider-vertical
+              %li.dropdown
+                %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#settings"}
+                  = current_user.email
+                  %b.caret
+                %ul.dropdown-menu
+                  %li
+                    %a{:href => edit_user_registration_path}
+                      %i.icon-user
+                      My profile
+                  %li.divider
+                  %li
+                    %a{:href => destroy_user_session_path, "data-method" => :delete, "rel" => "nofollow"}
+                      %i.icon-off
+                      Sign out
+                    -# = link_to "Sign out", destroy_user_session_path, :method => :delete
+            - else
+              %li= link_to "Register", new_user_registration_path
+              %li= link_to "Sign in", new_user_session_path

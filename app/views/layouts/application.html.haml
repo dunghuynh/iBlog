@@ -1,54 +1,35 @@
 !!!
 %html
   %head
-    %title IBlog
-    = stylesheet_link_tag    "application"
-    = javascript_include_tag "application"
+    %meta(charset="utf-8")
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    %title= content_for?(:title) ? yield(:title) : "iBlog"
     = csrf_meta_tags
+    / Le HTML5 shim, for IE6-8 support of HTML elements
+    /[if lt IE 9]
+      = javascript_include_tag "http://html5shim.googlecode.com/svn/trunk/html5.js"
+    = stylesheet_link_tag    "application", :media => "all"
+    = javascript_include_tag "application"
+    %link(href="images/favicon.ico" rel="shortcut icon")
+    %link(href="images/apple-touch-icon.png" rel="apple-touch-icon")
+    %link(href="images/apple-touch-icon-72x72.png" rel="apple-touch-icon" sizes="72x72")
+    %link(href="images/apple-touch-icon-114x114.png" rel="apple-touch-icon" sizes="114x114")
+
   %body
-    %header#page_header
-      %nav.nav_bar
-        #nav_header
-          %ul
-            %li= link_to "iBlog", root_path
-            %li= link_to "Featured Articles", featured_articles_path
-            %li= link_to "All Articles", articles_path
-        #nav_user
-          %ul
-            - if user_signed_in?
-              %li
-                %span#currentuser= current_user.email
-              %li= link_to "My Articles", myarticles_articles_path
-              %li= link_to "My Profile", edit_user_registration_path
-              %li= link_to "Sign out", destroy_user_session_path, :method => :delete
-            - else
-              %li= link_to "Register", new_user_registration_path
-              %li= link_to "Sign in", new_user_session_path
-            %li#listsearch
-              = form_tag articles_path, :method => 'get' do
-                = text_field_tag :search, params[:search]
-                = submit_tag "Search", :name => nil
-      %section#page_title
-        .title= link_to "iBlog", root_path
-        .slogan write yours before too late
-    %section#main_container
-      #content_wrapper
-        %section#content_column
+    = render "header"
+
+    %section#main-container.container
+      %section#flashes.row
+        .span12
           = render "flashes"
+      %section#side-bar.row
+        .span3
+          %section.well.sidebar-nav
+            %ul.nav.nav-list
+              %li.nav-header Sidebar
+              %li= link_to "google", "http://google.com"
+              %li= link_to "facebook", "http://facebook.com"
+        .span9
           = yield
-      %section#sidebar_column
-        %section#sidebar_text.box
-          %h3 Sidebar text h3
-          %h4 Sidebar text h4, below is ul:
-          %ul
-            %li list item 1
-            %li list item 2
-            %li list item 3
-            %li list item 4
-        %section#sidebar_links.box
-          %h3 Links
-          %div= link_to "google", "http://google.com"
-          %div= link_to "facebook", "http://facebook.com"
-    %footer#page_footer
-      %hr
-      Copyright 2011
+
+    = render "footer"

@@ -7,236 +7,23 @@
  *= require jquery-ui
 */
 
-* {
-  margin: 0;
-  padding: 0;
-}
-
-a {
-  text-decoration: none;
-  color: #007777;
-  &:hover {
-    color: #00aaaa;
-  }
-}
-
-body {
-  background-color: #FFF;
-  font-size: 0.9em;
-  font-family: 'helvetica neue',helvetica,arial,sans-serif;
-}
-
-
-#page_header {
-  background-color: #606060;
-  box-shadow: 0 0 20px #000000;
-}
-
-.nav_bar {
-  background-color: rgba(30, 30, 30, 0.5);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 0 20px #000000;
-  padding: 0 10px;
-  height: 20px;
-
-  a {
-    color: #BBB;
-    &:visited {
-      color: #BBB;
-    }
-    &:hover {
-      color: #AAA;
-    }
-  }
-
-  ul {
-    color: #FFFFFF;
-  }
-
-  li {
-    font-size: 1.2em;
-    color: #FFFFFF;
-    margin-right: 10px;
-    display: inline;
-    float:left;
-  }
-}
-
-
-#nav_user {
-  float: right;
-}
-
-#nav_header {
-  float: left;
-}
-
-#page_title {
-  clear: left;
-  color: #EEEEEE;
-  padding: 5px 40px;
-  margin-bottom: 20px;
-
-  .slogan {
-    font-style: italic;
-  }
-
-  .title {
-    font-size: 3em;
-    text-shadow: 1px 0 0 #262729;
+#header {
+  .navbar-fixed-top .brand {
     font-weight: bold;
-    letter-spacing: 1px; 
-  }
-
-  a {
-    color: #EEE;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125);
+    -webkit-transition: all .2s linear;
+    -moz-transition: all .2s linear;
+    transition: all .2s linear;
     &:hover {
-      color: #DDD;
+      color: #08C;
     }
   }
 }
 
-/* style the flash; there is an id flash at the section and a class at each of the flash divs */
-#flash { }
-.flash {
-  padding: 10px;
-  margin: 0px;
-  border-radius: 10px 10px 10px 10px;
-  color: #FFF;
-}
-.error, .alert { background-color: #ff2233; }
-.notice { background-color: #00cc00; }
-
-#maincontainer {
-  overflow: hidden;
-  background-color: blue;
-  widht: 100%;
-}
-
-/* do some floating: we have two columns, content and sidebar, both are in maincontainer */
-#content_wrapper {
-  float: left;
-  width: 100%;
-}
-
-#content_column {
-  margin-right: 250px; /*Set right margin to RightColumnWidth*/
-  margin-left: 10px;
-  padding: 0 15px;
-}
-
-/* this is our sidebar with its elements */
-#sidebar_column {
-  float: left;
-  padding: 0;
-  margin-left: -250px; /*Set left margin to -(RightColumnWidth) */
-  margin-right: 10px;
-  width: 200px;
-  .box {
-    background-color: #666;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    color: #DDD;
-  }
-  h3 {
-    font-size: 13px;
-    margin-bottom: 10px; }
-  h4 {
-    font-size: 12px;
-    font-weight: normal;
-    margin-bottom: 10px; }
-  a {
-    font-size: 12px;
-    color: #FFF;
-    &:hover {
-      color: #0BB; } }
-  hr {
-    margin: 5px 0;
-    color: #ffffff; }
-  ul {
-    list-style: square;
-    font-size: 12px; }
-  li {
-    margin: 0 0 0 30px;
-    padding: 0 10px 0 0; } }
-
-/* Footer */
-
-footer#page_footer {
-  clear: both;
-  margin: 2%;
-  text-align: center;
-  font-size: 0.8em;
-}
-
-/* apply some styling to devise forms */
-
-#user_edit label, #user_new label, #user_edit i, #user_new i {
-  font-size: 12px; }
-
-#user_edit p, #user_new p {
-  font-size: 12px;
-  margin-bottom: 10px; }
-
-#user_edit span, #user_new span {
-  margin-left: 7px;
-  font-size: 12px;
-  font-style: italic; }
-
-#user_edit div, #user_new div {
-  margin-top: 10px; }
-
-#user_current_password {
-  border: 1px solid #c81419; }
-
-#cancel {
-  margin-top: 30px;
-  font-size: 11px !important; }
-
-#user_edit .field_with_errors, #user_new .field_with_errors {
-  padding: 0 !important;
-  margin: 0 !important; }
-
-/* style forms (standard rails forms) */
-
-div {
-  &.field, &.actions {
-    margin-bottom: 10px; }
-  &.field label {
-    font-size: 12px; } }
-
-/* style the errors of _form.html.haml (articles) */
-
-.field_with_errors label {
-  padding: 3px 10px 3px 10px;
-  background-color: #c81419;
-  color: #ffffff;
-  display: table; }
-
-.field_with_errors input{
-  // background: #FF4545;
-}
-
-#error_explanation {
-  margin: 20px 0;
-  padding: 0;
-  width: 450px;
-  border: 2px solid #c81419;
-  background-color: #f0f0f0;
-  h2 {
-    text-align: left;
-    font-weight: bold;
-    padding: 5px 5px 5px 15px;
-    margin-bottom: 10px;
-    font-size: 12px;
-    background-color: #c81419;
-    color: #ffffff; }
-  ul li {
-    font-size: 12px;
-    margin-left: 30px;
-    list-style: square; 
-  }
+#footer {
+  margin-top: 35px;
+  padding: 25px 0 26px;
+  border-top: 1px solid #E5E5E5;
 }
 
 /* Rating
@@ -247,3 +34,24 @@ div {
 .stars .yellowstars { height: 25px; width: 0px; background: url('/assets/star.png') left repeat-x; } 
 .stars .text { text-align: right; font-size: 10px; }
 .floatstars { float: right; }
+
+/* Fix, hack
+ ************************************
+ */
+.clearfix {
+  clear: both;
+}
+
+
+/* errors
+ ************************************
+ */
+.fieldWithErrors {
+  border-color: #B94A48;
+  &:focus {
+    border-color: #953b39;
+    -webkit-box-shadow: 0 0 6px #d59392;
+    -moz-box-shadow: 0 0 6px #d59392;
+    box-shadow: 0 0 6px #d59392;
+  }
+}

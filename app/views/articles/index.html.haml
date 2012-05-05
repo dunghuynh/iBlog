@@ -1,9 +1,9 @@
 %section#articles
   - @articles.each do |article|
-    %article.article
+    %article
       %ul.stars.floatstars
-        %li.yellowstars{:style => "width: #{article.avg_rating * 25}px !important;"}
-      .title= link_to article.title, article
+        %li.yellowstars{:style => "width: #{article.avg_rating * 25}px;"}
+      %h3.title= link_to article.title, article
       .byline
         #{article.created_at.strftime("%B %d, %Y")} : #{article.state}
       .teaser= article.teaser

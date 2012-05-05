@@ -1,69 +1,80 @@
-%section#articleheader
-  %h2= @article.title
-  %ul.stars.floatstars
-    %li.yellowstars{:style => "width: #{@article.avg_rating * 25}px !important;"}
-    %li.text #{@article.avg_rating} average from #{pluralize(@article.count_ratings, "vote")}
-  .byline
-    written by #{link_to @article.user.fullname, ""}
-  .avatar
-    = image_tag gravatar(@article.user.email, 64)
-  %h3= @article.teaser
-%section#articlebody.textile
-  = @article.body
-  -# comments are available for published articles only
-  - if @article.state > 2
-    %section#rating
+#article
+  %section#article-header
+    .row
+      %h2.span7= @article.title
+      .span2
+        %ul.stars.floatstars
+          %li.yellowstars{:style => "width: #{@article.avg_rating * 25}px !important;"}
+          %li.text #{@article.avg_rating} average from #{pluralize(@article.count_ratings, "vote")}
+    .row
+      .span1
+        .avatar
+          = image_tag gravatar(@article.user.email, 72), :class => "thumbnail"
+      .span8
+        written by #{link_to @article.user.fullname, ""}
+        %h4.teaser= @article.teaser
+  %section#article-body
+    = @article.body
+    -# comments are available for published articles only
+    - if @article.state > 2
       - if user_signed_in?
-        = form_for [@article, @rating_currentuser] do |f|
+        %section#rating
+          = form_for [@article, @rating_currentuser] do |f|
+            %ul
+              %li
+                %label
+                  = f.radio_button :stars, "5"
+                  %span Excellent
+              %li
+                %label
+                  = f.radio_button :stars, "4"
+                  %span Very Good
+              %li
+                %label
+                  = f.radio_button :stars, "3"
+                  %span Good
+              %li
+                %label
+                  = f.radio_button :stars, "2"
+                  %span Average
+              %li
+                %label
+                  = f.radio_button :stars, "1"
+                  %span Poor
+            = f.submit "Rate this article", :class => "awesome custom red"
+        - else
           #ratingbox
-            %ul#ratingbuttons
-              %li
-                = f.radio_button :stars, "5"
-                %span Excellent
-              %li
-                = f.radio_button :stars, "4"
-                %span Very Good
-              %li
-                = f.radio_button :stars, "3"
-                %span Good
-              %li
-                = f.radio_button :stars, "2"
-                %span Average
-              %li
-                = f.radio_button :stars, "1"
-                %span Poor
-            .center= f.submit "Rate this article", :class => "awesome custom red"
-      - else
-        #ratingbox
-          = link_to "Sign in", new_user_session_path
-          to rate this article
-    %section#comments
-      - @comments.each do |comment|
-        %article.comment
-          .avatar= image_tag gravatar(comment.user.email, 48)
-          .commentbody
-            .commenthead
+            = link_to "Sign in", new_user_session_path
+            to rate this article
+      %section#comments
+        - @comments.each do |comment|
+          %article.comment.row
+            .span1.avatar
+              = image_tag gravatar(comment.user.email, 48), :class => "thumbnail"
+            .span8
               = comment.user.fullname
               \- #{time_ago_in_words(comment.created_at)} ago
-        -# display delete link only for comments written by this particular user
-        - if user_signed_in? and comment.user_id == current_user.id
-          %span= link_to 'delete', article_comment_path(@article, comment), :confirm => 'Are you sure?', :method => :delete, :class => ""
-        %div= comment.body
-    -# add a new comment
-    %article.comment.newcomment
-      - if user_signed_in?
-        .avatar= image_tag gravatar(current_user.email, 48)
-        .commentbody
-          - if current_user.fullname == nil or current_user.fullname == ''
-            .commenthead
-              Please complete your #{link_to "profile", edit_user_registration_path} before posting comments.
-          - else
-            .commenthead
-              = current_user.fullname
-            %div
-              = form_for [@article, current_user.comments.new] do |f|
-                = f.text_area :body, :size => "100%x20", :class => "fullwidth"
-                = f.submit "Add Comment", :class => "awesome custom red"
-      - else
-        .signin
-          Please #{link_to "sign in", new_user_session_path} before posting a comment.
+              -# display delete link only for comments written by this particular user
+              - if user_signed_in? and comment.user_id == current_user.id
+                %span= link_to 'delete', article_comment_path(@article, comment), :confirm => 'Are you sure?', :method => :delete, :class => ""
+              .body= comment.body
+      -# add a new comment
+      %article#newcomment
+        - if user_signed_in?
+          .row
+            .span1.avatar
+              = image_tag gravatar(current_user.email, 48), :class => "thumbnail"
+            .span8
+              - if current_user.fullname == nil or current_user.fullname == ''
+                Please complete your #{link_to "profile", edit_user_registration_path} before posting comments.
+              - else
+                = form_for [@article, current_user.comments.new] do |f|
+                  .row
+                    .span6
+                      = f.text_area :body
+                      = current_user.fullname
+                    .span2
+                      = f.submit "Add Comment", :rows => "2"
+        - else
+          .signin
+            Please #{link_to "sign in", new_user_session_path} before posting a comment.
