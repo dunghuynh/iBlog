@@ -9,6 +9,7 @@ namespace :db do
     test_user.shortbio = Populator.sentences(2..5)
     test_user.weburl = Faker::Internet.domain_name
     test_user.skip_confirmation!
+    test_user.country_id = 1
     test_user.save
     populate_article_for_user(test_user.id)
 
@@ -20,6 +21,7 @@ namespace :db do
       user.shortbio = Populator.sentences(2..5)
       user.weburl = Faker::Internet.domain_name
       user.confirmed_at = test_user.confirmed_at
+      user.country_id = 1
       populate_article_for_user(user.id)
     end
   end

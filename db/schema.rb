@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(:version => 20120212094903) do
   create_table "comments", :force => true do |t|
     t.integer  "user_id"
     t.integer  "article_id"
-    t.string   "body",       :null => false
+    t.text     "body",       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -42,9 +42,9 @@ ActiveRecord::Schema.define(:version => 20120212094903) do
   add_index "comments", ["user_id", "article_id"], :name => "index_comments_on_user_id_and_article_id"
 
   create_table "ratings", :force => true do |t|
-    t.integer  "user_id",                   :null => false
-    t.integer  "article_id",                :null => false
-    t.integer  "stars",      :default => 0
+    t.integer  "user_id",    :null => false
+    t.integer  "article_id", :null => false
+    t.integer  "stars"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
