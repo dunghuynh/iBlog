@@ -54,9 +54,9 @@ group :development, :test do
   gem 'pickle' # Easy model creation and reference in your cucumber features
   gem 'ruby-debug19', :require => 'ruby-debug'
   gem 'awesome_print'
-  gem 'populator'
-  gem 'faker'
 end
+gem 'populator'
+gem 'faker'
 
 group :test do
   gem 'cucumber-rails'
